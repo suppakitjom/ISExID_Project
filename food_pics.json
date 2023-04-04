@@ -1,0 +1,54 @@
+{
+  "food_pics/bread.png": {
+    "choices": ["Bread", "Apple", "Coffee"],
+    "correct": 0
+  },
+  "food_pics/milk.png": {
+    "choices": ["Broccoli", "Coffee", "Chocolate Milk"],
+    "correct": 2
+  },
+  "food_pics/broccoli.png": {
+    "choices": ["Broccoli", "Grape Juice", "Popcorn"],
+    "correct": 0
+  },
+  "food_pics/cheese.png": {
+    "choices": ["Spaghetti", "Cheese", "Yoghurt"],
+    "correct": 1
+  },
+  "food_pics/coffee.png": {
+    "choices": ["Jam", "Apple", "Coffee"],
+    "correct": 2
+  },
+  "food_pics/grape juice.png": {
+    "choices": ["Salsa", "Grape Juice", "Bread"],
+    "correct": 1
+  },
+  "food_pics/jam.png": {
+    "choices": ["Jam", "Steak", "Watermelon"],
+    "correct": 0
+  },
+  "food_pics/popcorn.png": {
+    "choices": ["Rice", "Apple", "Popcorn"],
+    "correct": 2
+  },
+  "food_pics/rice.png": {
+    "choices": ["Rice", "Coffee", "Salsa"],
+    "correct": 0
+  },
+  "food_pics/salsa.png": {
+    "choices": ["Watermelon", "Salsa", "Popcorn"],
+    "correct": 1
+  },
+  "food_pics/spaghetti.png": {
+    "choices": ["Spaghetti", "Grape Juice", "Broccoli"],
+    "correct": 0
+  },
+  "food_pics/steak.png": {
+    "choices": ["Popcorn", "Bread", "Steak"],
+    "correct": 2
+  },
+  "food_pics/watermelon.png": {
+    "choices": ["Watermelon", "Salsa", "Grape Juice"],
+    "correct": 0
+  }
+}

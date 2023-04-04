@@ -1,6 +1,0 @@
-from tkinter import *
-from random import randint
-from PIL import ImageTk, Image
-import os
-
-# automatically create list of pictures in food_pics
