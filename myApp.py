@@ -1,10 +1,10 @@
 import sys
-from random import randint
 import numpy as np
 from PyQt6.QtWidgets import (QApplication, QLabel, QMainWindow, QPushButton,
                              QVBoxLayout, QHBoxLayout, QWidget, QGridLayout)
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QSize
+from tts.tts_functions import speakTextSSML, speakText
 import time
 import json
 
@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
         self.data = getCategoryData(set)
         self.numCards = len(self.data)
         self.randomOrder = np.random.permutation(self.numCards)
-        print(self.randomOrder)
+        # print(self.randomOrder)
         self.index = 0
         self.picPath = self.data[self.randomOrder[self.index]][0]
         self.correctCount = 0
@@ -36,10 +36,12 @@ class MainWindow(QMainWindow):
         page_layout = QGridLayout()
         button_layout = QHBoxLayout()
         self.pic = QPixmap(self.picPath)
+        # scale the self.pic to fit height of ___, width will be scaled accordingly
+        self.pic = self.pic.scaledToHeight(800)
         self.pic_label = QLabel()
         self.pic_label.setPixmap(self.pic)
-        self.pic_label.setFixedSize(QSize(600, 800))
-        self.pic_label.setScaledContents(True)
+        # self.pic_label.setFixedSize(QSize(600, 800))
+        # self.pic_label.setScaledContents(True)
 
         self.choices = self.data[self.randomOrder[self.index]][1]
 
@@ -66,18 +68,16 @@ class MainWindow(QMainWindow):
             "{"
             "border: 1px solid black; color: white; font-size: 60px; font-family: Comic Sans MS; background-color: red"
             "}")
-        self.choiceOrder = [0, 1, 2]
+
         for i in range(3):
+            self.choice_buttons[i].setShortcut(f'{i+1}')
             if self.choices['correct'] == i:
                 self.choice_buttons[i].clicked.connect(self.correctChoice)
                 self.choice_buttons[i].setStyleSheet(self.correctButtonStyle)
             else:
                 self.choice_buttons[i].clicked.connect(self.incorrectChoice)
                 self.choice_buttons[i].setStyleSheet(self.inCorrectButtonStyle)
-
-        #randomly add the button to the frame
-        for n in np.random.permutation(3):
-            button_layout.addWidget(self.choice_buttons[n])
+            button_layout.addWidget(self.choice_buttons[i])
 
         page_layout.addWidget(self.pic_label, 0, 0,
                               Qt.AlignmentFlag.AlignCenter)
@@ -93,6 +93,7 @@ class MainWindow(QMainWindow):
         if self.index < self.numCards:
             self.picPath = self.data[self.randomOrder[self.index]][0]
             self.pic = QPixmap(self.picPath)
+            self.pic = self.pic.scaledToHeight(800)
             self.pic_label.setPixmap(self.pic)
             self.choices = self.data[self.randomOrder[self.index]][1]
             i = 0
@@ -100,6 +101,7 @@ class MainWindow(QMainWindow):
             for n in self.choiceOrder:
                 self.choice_buttons[i].disconnect()
                 self.choice_buttons[i].setText(self.choices['choices'][n])
+                self.choice_buttons[i].setShortcut(f'{i+1}')
                 if self.choices['correct'] == n:
                     self.choice_buttons[i].clicked.connect(self.correctChoice)
                     self.choice_buttons[i].setStyleSheet(
@@ -110,47 +112,73 @@ class MainWindow(QMainWindow):
                     self.choice_buttons[i].setStyleSheet(
                         self.inCorrectButtonStyle)
                 i += 1
+
         else:
             # change into summary page
-            self.pic_label.setText(
-                f"Correct: {self.correctCount} Incorrect: {self.incorrectCount}"
-            )
-            self.pic_label.setScaledContents(False)
-            self.pic_label.setFixedSize(QSize(1000, 800))
-            self.pic_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.pic_label.setStyleSheet(
-                "border: 1px solid black; color: black; font-size: 60px; font-family: Comic Sans MS; background-color: white"
-            )
+            self.setCentralWidget(
+                summaryWidget(self.correctCount, self.incorrectCount))
+            # unbind all the buttons
             for i in range(3):
-                self.choice_buttons[i].hide()
+                self.choice_buttons[i].disconnect()
+                self.choice_buttons[i].clicked.connect(lambda: None)
 
     def correctChoice(self):
-        # change the button color to green
-        correctStyle = "border: 1px solid black; color: black; font-size: 60px; font-family: Comic Sans MS; background-color: black"
-        self.choice_buttons[self.choices['correct']].setStyleSheet(
-            correctStyle)
+        speakTextSSML('Correct! The answer is' + self.sender().text() + '!')
         print("Correct")
-        time.sleep(.3)
+        # time.sleep(.3)
         self.correctCount += 1
         self.nextCard()
 
     def incorrectChoice(self):
+        speakTextSSML('Wrong! The correct answer is ' +
+                      self.choices['choices'][self.choices['correct']] + '!')
         print("Incorrect")
-        time.sleep(.3)
+        # time.sleep(.3)
         self.incorrectCount += 1
         self.nextCard()
 
-    def keyPressEvent(self, event):
-        print(self.choiceOrder)
-        if event.key() == Qt.Key.Key_1:
-            self.centralWidget().layout().itemAt(1).layout().itemAt(
-                0).widget().click()
-        elif event.key() == Qt.Key.Key_2:
-            self.centralWidget().layout().itemAt(1).layout().itemAt(
-                1).widget().click()
-        elif event.key() == Qt.Key.Key_3:
-            self.centralWidget().layout().itemAt(1).layout().itemAt(
-                2).widget().click()
+    # def keyPressEvent(self, event):
+    #     if event.key() == Qt.Key.Key_1:
+    #         self.choice_buttons[0].animateClick()
+    #     elif event.key() == Qt.Key.Key_2:
+    #         self.choice_buttons[1].animateClick()
+    #     elif event.key() == Qt.Key.Key_3:
+    #         self.choice_buttons[2].animateClick()
+
+
+class summaryWidget(QWidget):
+    def __init__(self, correct, incorrect):
+        super().__init__()
+        self.correctCount = correct
+        self.incorrectCount = incorrect
+        self.correctLabel = QLabel(f'\tCorrect: {self.correctCount}')
+        self.correctLabel.setStyleSheet(
+            'font-size: 80px; font-family: Comic Sans MS; color: green;')
+        self.incorrectLabel = QLabel(f'\tIncorrect: {self.incorrectCount}')
+        self.incorrectLabel.setStyleSheet(
+            'font-size: 80px; font-family: Comic Sans MS; color: red;')
+        self.pageLayout = QVBoxLayout(self)
+        self.correctBox = QHBoxLayout(self)
+        self.incorrectBox = QHBoxLayout(self)
+        self.correctPic = QPixmap('correct.png')
+        self.correctPic = self.correctPic.scaledToHeight(200)
+        self.correctPicLabel = QLabel()
+        self.correctPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.correctPicLabel.setPixmap(self.correctPic)
+        self.incorrectPic = QPixmap('incorrect.png')
+        self.incorrectPic = self.incorrectPic.scaledToHeight(200)
+        self.incorrectPicLabel = QLabel()
+        self.incorrectPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.incorrectPicLabel.setPixmap(self.incorrectPic)
+        self.correctBox.addWidget(self.correctPicLabel)
+        self.correctBox.addWidget(self.correctLabel)
+        self.correctBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.incorrectBox.addWidget(self.incorrectPicLabel)
+        self.incorrectBox.addWidget(self.incorrectLabel)
+        self.incorrectBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.pageLayout.addLayout(self.correctBox)
+        self.pageLayout.addLayout(self.incorrectBox)
+        self.setLayout(self.pageLayout)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,19 @@
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+       xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">
+    <voice name=VOICE>
+        <mstts:express-as style= STYLE>
+            TEXT
+        </mstts:express-as>
+    </voice>
+</speak>
+
+<!--
+    names: 
+    "en-GB-RyanNeural" : default, cheerful, chat
+    "en-US-DavisNeural" : default, chat, angry, cheerful, excited, friendly, hopeful, sad, shouting, terrified, unfriendly, whispering
+    "en-US-GuyNeural" : default, newscast, angry, cheerful, sad, excited, friendly, terrified, shouting, unfriendly, whispering, hopeful
+    "en-US-JasonNeural" : default, angry, cheerful, excited, friendly, hopeful, sad, shouting, terrified, unfriendly, whispering
+    "en-US-TonyNeural" : default, angry, cheerful, excited, friendly, hopeful, sad, shouting, terrified, unfriendly, whispering
+    "en-US-AriaNeural" : default, chat, customerservice, narration-professional, newscast-casual, newscast-formal, cheerful, empathetic, angry, sad, excited, friendly, terrified, shouting, unfriendly, whispering, hopeful
+    "en-US-JennyNeural" : default, assistant, chat, customerservice, newscast, angry, cheerful, sad, excited, friendly, terrified, shouting, unfriendly, whispering, hopeful
+-->
