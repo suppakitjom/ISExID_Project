@@ -28,8 +28,8 @@ def speakTextSSML(text):  #change voice and style in tts_voice_config.xml
     # "en-US-AriaNeural" : default, chat, customerservice, narration-professional, newscast-casual, newscast-formal, cheerful, empathetic, angry, sad, excited, friendly, terrified, shouting, unfriendly, whispering, hopeful
     # "en-US-JennyNeural" : default, assistant, chat, customerservice, newscast, angry, cheerful, sad, excited, friendly, terrified, shouting, unfriendly, whispering, hopeful
 
-    style = 'angry'
-    voice = 'en-US-DavisNeural'
+    style = 'cheerful'
+    voice = 'en-US-JaneNeural'
     if not text:
         return
     synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config,

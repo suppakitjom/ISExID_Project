@@ -137,14 +137,6 @@ class MainWindow(QMainWindow):
         self.incorrectCount += 1
         self.nextCard()
 
-    # def keyPressEvent(self, event):
-    #     if event.key() == Qt.Key.Key_1:
-    #         self.choice_buttons[0].animateClick()
-    #     elif event.key() == Qt.Key.Key_2:
-    #         self.choice_buttons[1].animateClick()
-    #     elif event.key() == Qt.Key.Key_3:
-    #         self.choice_buttons[2].animateClick()
-
 
 class summaryWidget(QWidget):
     def __init__(self, correct, incorrect):
