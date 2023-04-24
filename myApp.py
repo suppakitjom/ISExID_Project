@@ -19,12 +19,18 @@ def getCategoryData(set):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, set=0):
+    def __init__(self):
         super().__init__()
         self.setWindowTitle("Flashcard App")
         self.showMaximized()
         self.setStyleSheet('background-color: white;')
-        self.data = getCategoryData(set)
+        self.setCentralWidget(cardsWidget())
+
+
+class cardsWidget(QWidget):
+    def __init__(self, set=0):
+        super().__init__()
+        self.data = self.getCategoryData(set)
         self.numCards = len(self.data)
         self.randomOrder = np.random.permutation(self.numCards)
         # print(self.randomOrder)
@@ -36,7 +42,6 @@ class MainWindow(QMainWindow):
         page_layout = QGridLayout()
         button_layout = QHBoxLayout()
         self.pic = QPixmap(self.picPath)
-        # scale the self.pic to fit height of ___, width will be scaled accordingly
         self.pic = self.pic.scaledToHeight(800)
         self.pic_label = QLabel()
         self.pic_label.setPixmap(self.pic)
@@ -44,7 +49,6 @@ class MainWindow(QMainWindow):
         # self.pic_label.setScaledContents(True)
 
         self.choices = self.data[self.randomOrder[self.index]][1]
-
         self.choice_buttons = [
             QPushButton(text=self.choices['choices'][i]) for i in range(3)
         ]
@@ -52,21 +56,21 @@ class MainWindow(QMainWindow):
         self.correctButtonStyle = (
             "QPushButton"
             "{"
-            "border: 1px solid black; color: black; font-size: 60px; font-family: Comic Sans MS; background-color: white"
+            "border-radius: 15; border: 1px solid black; color: black; font-size: 60px; font-family: Comic Sans MS; background-color: white"
             "}"
             "QPushButton::pressed"
             "{"
-            "border: 1px solid black; color: white; font-size: 60px; font-family: Comic Sans MS; background-color: green"
+            "border-radius: 15; border: 1px solid black; color: white; font-size: 60px; font-family: Comic Sans MS; background-color: green"
             "}")
 
         self.inCorrectButtonStyle = (
             "QPushButton"
             "{"
-            "border: 1px solid black; color: black; font-size: 60px; font-family: Comic Sans MS; background-color: white"
+            "border-radius: 15; border: 1px solid black; color: black; font-size: 60px; font-family: Comic Sans MS; background-color: white"
             "}"
             "QPushButton::pressed"
             "{"
-            "border: 1px solid black; color: white; font-size: 60px; font-family: Comic Sans MS; background-color: red"
+            "border-radius: 15; border: 1px solid black; color: white; font-size: 60px; font-family: Comic Sans MS; background-color: red"
             "}")
 
         for i in range(3):
@@ -84,9 +88,7 @@ class MainWindow(QMainWindow):
         page_layout.addLayout(button_layout, 1, 0)
         # page_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         page_layout.setRowStretch(1, 3)
-        widget = QWidget()
-        widget.setLayout(page_layout)
-        self.setCentralWidget(widget)
+        self.setLayout(page_layout)
 
     def nextCard(self):
         self.index += 1
@@ -136,6 +138,12 @@ class MainWindow(QMainWindow):
         # time.sleep(.3)
         self.incorrectCount += 1
         self.nextCard()
+
+    def getCategoryData(self, set):
+        # store the json file of the category in a variable then return
+        with open(f'{flashcard_set[set]}.json') as f:
+            data = json.load(f)
+        return list(data.items())
 
 
 class summaryWidget(QWidget):
