@@ -1,7 +1,12 @@
-# rename all files in animal_bgs2 to have uppercase first letter
-# and lowercase rest of name, including lowercase .png
-import os
-for file in os.listdir('animal_bgs2'):
-    x = file.split('.')
-    x[1] = x[1].lower()
-    os.rename(f'animal_bgs2/{file}', f'animal_bgs2/{x[0]}.{x[1]}')
+import pynput
+from pynput.keyboard import Key, Controller
+import random
+
+keyboard = Controller()
+import time
+while True:
+    #randomly press 1,2,3,4
+    x = str(random.randint(1, 4))
+    keyboard.press(x)
+    keyboard.release(x)
+    time.sleep(2)

@@ -149,11 +149,9 @@ class gamePage(QWidget):
                 self.buttons[i].setShortcut(str(i + 1))
             # self.playAnimalSound()
         else:
-            self.parent().summaryWidget = summaryWidget(
-                self.correctCount, self.incorrectCount, self.parent())
-            self.parent().setCentralWidget(self.parent().summaryWidget)
-
-            time.sleep(5)
+            # self.parent().summaryWidget = summaryWidget(
+            #     self.correctCount, self.incorrectCount, self.parent())
+            # self.parent().setCentralWidget(self.parent().summaryWidget)
             self.parent().advancedWidget = advancedGamePage(
                 self.parent(), self.randomSix)
             self.parent().setCentralWidget(self.parent().advancedWidget)
@@ -273,7 +271,8 @@ class advancedGamePage(QWidget):
             self.buttons[i].setShortcut(str(i + 1))
             self.pageLayout.addWidget(self.buttons[i], 1, i,
                                       Qt.AlignmentFlag.AlignBottom)
-
+        self.playSoundShortcut = QShortcut(QKeySequence('4'), self)
+        self.playSoundShortcut.activated.connect(self.playAnimalSound)
         self.setLayout(self.pageLayout)
 
     def correct(self):
@@ -324,6 +323,14 @@ class advancedGamePage(QWidget):
 
             self.parent().setCentralWidget(self.parent().summaryWidget)
 
+    def playAnimalSound(self):
+        print('playing sound')
+        # speakTextSSML(self.pictures[self.randomSix[self.index]])
+        self.player.stop()
+        self.player.set_mrl('animal_sounds/' +
+                            self.pictures[self.randomSix[self.index]] + '.mp3')
+        self.player.play()
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -336,7 +343,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication([])
-    app.setWindowIcon(QIcon('conan.png'))
+    app.setWindowIcon(QIcon('spykid.png'))
     window = MainWindow()
     window.show()
     window.setCentralWidget(gamePage(window))
