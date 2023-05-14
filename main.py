@@ -15,6 +15,7 @@ class gamePage(QWidget):
         self.correctCount = 0
         self.incorrectCount = 0
         self.pageLayout = QGridLayout()
+        self.setFixedSize(QSize(800, 480))
         self.pictures = [
             x.split('.')[0] for x in os.listdir('animal_bgs')
             if (x.endswith('.png'))
@@ -78,13 +79,13 @@ class gamePage(QWidget):
         for i in range(3):
             picTemp = QPixmap('animal_pics/' +
                               self.pictures[randomChoices[i]] + '.png')
-            picTemp = picTemp.scaledToHeight(350)
+            picTemp = picTemp.scaledToHeight(150)
             self.buttons[i].setIcon(QIcon(picTemp))
             self.buttons[i].setIconSize(picTemp.size())
             self.buttons[i].setText(self.buttonLabel[i])
             self.buttons[i].setToolButtonStyle(
                 Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-            self.buttons[i].setFixedSize(QSize(350, 450))
+            self.buttons[i].setFixedSize(QSize(175, 250))
             if randomChoices[i] == self.randomSix[self.index]:
                 self.buttons[i].setStyleSheet(self.correctButtonStyle)
                 self.buttons[i].clicked.connect(self.correct)
@@ -172,24 +173,25 @@ class summaryWidget(QWidget):
     def __init__(self, correct, incorrect, parent=None):
         super().__init__(parent=parent)
         self.parent().setStyleSheet('QMainWindow {background-color: white;}')
+        self.setFixedSize(QSize(800, 480))
         self.correctCount = correct
         self.incorrectCount = incorrect
         self.correctLabel = QLabel(f'\tCorrect: {self.correctCount}')
         self.correctLabel.setStyleSheet(
-            'font-size: 80px; font-family: Opun; color: green;')
+            'font-size: 35px; font-family: Opun; color: green;')
         self.incorrectLabel = QLabel(f'\tIncorrect: {self.incorrectCount}')
         self.incorrectLabel.setStyleSheet(
-            'font-size: 80px; font-family: Opun; color: red;')
+            'font-size: 35px; font-family: Opun; color: red;')
         self.pageLayout = QVBoxLayout(self)
         self.correctBox = QHBoxLayout(self)
         self.incorrectBox = QHBoxLayout(self)
         self.correctPic = QPixmap('correct.png')
-        self.correctPic = self.correctPic.scaledToHeight(200)
+        self.correctPic = self.correctPic.scaledToHeight(100)
         self.correctPicLabel = QLabel()
         self.correctPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.correctPicLabel.setPixmap(self.correctPic)
         self.incorrectPic = QPixmap('incorrect.png')
-        self.incorrectPic = self.incorrectPic.scaledToHeight(200)
+        self.incorrectPic = self.incorrectPic.scaledToHeight(100)
         self.incorrectPicLabel = QLabel()
         self.incorrectPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.incorrectPicLabel.setPixmap(self.incorrectPic)
@@ -208,6 +210,7 @@ class advancedGamePage(QWidget):
     def __init__(self, parent=None, cardSet=None):
         super().__init__(parent=parent)
         self.player = vlc.MediaPlayer()
+        self.setFixedSize(QSize(800, 480))
         self.correctCount = 0
         self.incorrectCount = 0
         self.pageLayout = QGridLayout()
@@ -239,7 +242,7 @@ class advancedGamePage(QWidget):
         self.correctButtonStyle = (
             "QPushButton"
             "{"
-            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 70px; font-family: Opun;"
+            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 35px; font-family: Opun;"
             "}"
             "QPushButton::pressed"
             "{"
@@ -249,7 +252,7 @@ class advancedGamePage(QWidget):
         self.inCorrectButtonStyle = (
             "QPushButton"
             "{"
-            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 70px; font-family: Opun;"
+            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 35px; font-family: Opun;"
             "}"
             "QPushButton::pressed"
             "{"
@@ -261,7 +264,7 @@ class advancedGamePage(QWidget):
             self.buttons[i].setText(
                 self.pictures[randomChoices[i]].title().upper())
 
-            self.buttons[i].setFixedSize(QSize(450, 200))
+            self.buttons[i].setFixedSize(QSize(250, 100))
             if randomChoices[i] == self.randomSix[self.index]:
                 self.buttons[i].setStyleSheet(self.correctButtonStyle)
                 self.buttons[i].clicked.connect(self.correct)
@@ -338,6 +341,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Spy K🔍ds")
         self.setWindowIcon(QIcon('icon.png'))
         self.setStyleSheet('QMainWindow {background-color: white;}')
+        self.setFixedSize(QSize(800, 480))
         self.showMaximized()
 
 
@@ -346,6 +350,6 @@ if __name__ == '__main__':
     app.setWindowIcon(QIcon('spykid.png'))
     window = MainWindow()
     window.show()
-    window.setCentralWidget(gamePage(window))
-    # window.setCentralWidget(advancedGamePage(window))
+    # window.setCentralWidget(gamePage(window))
+    window.setCentralWidget(advancedGamePage(window))
     app.exec()
