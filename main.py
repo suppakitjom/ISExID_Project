@@ -28,22 +28,6 @@ class gamePage(QWidget):
             self.pictures[self.randomSix[self.index]] +
             ".png) 0 0 0 0 stretch stretch;}")
 
-        # self.currentWordLabel = QLabel()
-        # self.currentWordLabel.setText(
-        #     self.pictures[self.randomSix[self.index]])
-
-        # self.currentWordLabel.setStyleSheet(
-        #     "QLabel {font-size: 100px; font-family: Comic Sans MS; color: black; font-weight: bold; background-color: rgba(255, 255, 255, 0.75);}"
-        # )
-        # self.currentWordLabel.adjustSize()
-        # make label height the same as text
-        # self.currentWordLabel.setFixedHeight(
-        #     self.currentWordLabel.sizeHint().height())
-        # # set the alignment of the text
-        # self.currentWordLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.pageLayout.addWidget(self.currentWordLabel, 0, 0, 1, 3,
-        #                           Qt.AlignmentFlag.AlignVCenter)
-
         # generate two random choices not including the correct one
         randomChoices = np.random.permutation(len(self.pictures))[:2]
         # make sure the correct choice is not one of the random choices
@@ -341,7 +325,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Spy K🔍ds")
         self.setWindowIcon(QIcon('icon.png'))
         self.setStyleSheet('QMainWindow {background-color: white;}')
-        self.setFixedSize(QSize(800, 480))
+        # self.setFixedSize(QSize(800, 480))
+        self.setBaseSize(QSize(800, 480))
         self.showMaximized()
 
 
@@ -350,6 +335,6 @@ if __name__ == '__main__':
     app.setWindowIcon(QIcon('spykid.png'))
     window = MainWindow()
     window.show()
-    # window.setCentralWidget(gamePage(window))
-    window.setCentralWidget(advancedGamePage(window))
+    window.setCentralWidget(gamePage(window))
+    # window.setCentralWidget(advancedGamePage(window))
     app.exec()
