@@ -138,8 +138,10 @@ class gamePage(QWidget):
             # self.playAnimalSound()
         else:
             self.parent().setCentralWidget(
-                summaryWidget1(self.correctCount, self.incorrectCount,
-                               self.parent(),randomSix=self.randomSix))
+                summaryWidget1(self.correctCount,
+                               self.incorrectCount,
+                               self.parent(),
+                               randomSix=self.randomSix))
 
             # self.parent().setCentralWidget(
             #     advancedGamePage(self.parent(), self.randomSix))
@@ -445,12 +447,21 @@ if __name__ == '__main__':
     app = QApplication([])
     app.setWindowIcon(QIcon('spykid.png'))
     window = MainWindow()
-
     window.setStyleSheet(
         "QMainWindow {border-image: url(black.jpeg) 0 0 0 0 stretch stretch;}")
     window.setCentralWidget(blackPage(window))
+
+    screen_count = app.screens()
+    if len(screen_count) > 1:
+        second_screen = screen_count[1]
+        geometry = second_screen.geometry()
+        window = MainWindow()
+        window.move(geometry.x(), geometry.y())
+
+    window.show()
+    window.showFullScreen()
+
     # window.setCentralWidget(gamePage(window))
     # window.setCentralWidget(advancedGamePage(window))
     # window.setCentralWidget(summaryWidget2(6, 0, window))
-    window.show()
     app.exec()

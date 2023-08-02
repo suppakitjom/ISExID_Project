@@ -3,13 +3,13 @@ from pynput.keyboard import Key, Controller
 
 keyboard = Controller()
 
-PORT = '/dev/cu.usbmodem101'
+PORT = '/dev/cu.usbmodem2101'
 
 ser = serial.Serial(PORT, 9600)
 
 while True:
     text = ser.readline().strip().decode('utf-8')
-    # print(text)
+    print(text)
     # simulate keyboard press
     if text == '1':
         keyboard.press('1')
