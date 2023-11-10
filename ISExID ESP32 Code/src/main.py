@@ -3,7 +3,7 @@ from pynput.keyboard import Key, Controller
 
 keyboard = Controller()
 
-PORT = '/dev/cu.usbserial-53220232121'
+PORT = '/dev/cu.usbmodem2101'
 
 ser = serial.Serial(PORT, 9600)
 
@@ -23,3 +23,9 @@ while True:
     elif text == '4':
         keyboard.press('4')
         keyboard.release('4')
+    elif text == '5':
+        keyboard.press('5')
+        keyboard.release('5')
+    elif text == '6':
+        keyboard.press('6')
+        keyboard.release('6')

@@ -15,6 +15,7 @@ class gamePage(QWidget):
         self.correctCount = 0
         self.incorrectCount = 0
         self.pageLayout = QGridLayout()
+        self.setFixedSize(QSize(800, 480))
         self.pictures = [
             x.split('.')[0] for x in os.listdir('animal_bgs')
             if (x.endswith('.png'))
@@ -26,22 +27,6 @@ class gamePage(QWidget):
             "QMainWindow {border-image: url(animal_bgs/" +
             self.pictures[self.randomSix[self.index]] +
             ".png) 0 0 0 0 stretch stretch;}")
-
-        # self.currentWordLabel = QLabel()
-        # self.currentWordLabel.setText(
-        #     self.pictures[self.randomSix[self.index]])
-
-        # self.currentWordLabel.setStyleSheet(
-        #     "QLabel {font-size: 100px; font-family: Comic Sans MS; color: black; font-weight: bold; background-color: rgba(255, 255, 255, 0.75);}"
-        # )
-        # self.currentWordLabel.adjustSize()
-        # make label height the same as text
-        # self.currentWordLabel.setFixedHeight(
-        #     self.currentWordLabel.sizeHint().height())
-        # # set the alignment of the text
-        # self.currentWordLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.pageLayout.addWidget(self.currentWordLabel, 0, 0, 1, 3,
-        #                           Qt.AlignmentFlag.AlignVCenter)
 
         # generate two random choices not including the correct one
         randomChoices = np.random.permutation(len(self.pictures))[:2]
@@ -78,13 +63,13 @@ class gamePage(QWidget):
         for i in range(3):
             picTemp = QPixmap('animal_pics/' +
                               self.pictures[randomChoices[i]] + '.png')
-            picTemp = picTemp.scaledToHeight(350)
+            picTemp = picTemp.scaledToHeight(145)
             self.buttons[i].setIcon(QIcon(picTemp))
             self.buttons[i].setIconSize(picTemp.size())
             self.buttons[i].setText(self.buttonLabel[i])
             self.buttons[i].setToolButtonStyle(
                 Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-            self.buttons[i].setFixedSize(QSize(350, 450))
+            self.buttons[i].setFixedSize(QSize(175, 250))
             if randomChoices[i] == self.randomSix[self.index]:
                 self.buttons[i].setStyleSheet(self.correctButtonStyle)
                 self.buttons[i].clicked.connect(self.correct)
@@ -97,6 +82,9 @@ class gamePage(QWidget):
 
         self.playSoundShortcut = QShortcut(QKeySequence('4'), self)
         self.playSoundShortcut.activated.connect(self.playAnimalSound)
+
+        self.restartGameShortcut = QShortcut(QKeySequence('5'), self)
+        self.restartGameShortcut.activated.connect(self.restartGame)
 
         self.setLayout(self.pageLayout)
 
@@ -134,7 +122,7 @@ class gamePage(QWidget):
                 self.buttons[i].disconnect()
                 picTemp = QPixmap('animal_pics/' +
                                   self.pictures[randomChoices[i]] + '.png')
-                picTemp = picTemp.scaledToHeight(350)
+                picTemp = picTemp.scaledToHeight(145)
                 self.buttons[i].setIcon(QIcon(picTemp))
                 self.buttons[i].setIconSize(picTemp.size())
                 self.buttons[i].setText(self.buttonLabel[i])
@@ -149,12 +137,14 @@ class gamePage(QWidget):
                 self.buttons[i].setShortcut(str(i + 1))
             # self.playAnimalSound()
         else:
-            # self.parent().summaryWidget = summaryWidget(
-            #     self.correctCount, self.incorrectCount, self.parent())
-            # self.parent().setCentralWidget(self.parent().summaryWidget)
-            self.parent().advancedWidget = advancedGamePage(
-                self.parent(), self.randomSix)
-            self.parent().setCentralWidget(self.parent().advancedWidget)
+            self.parent().setCentralWidget(
+                summaryWidget1(self.correctCount,
+                               self.incorrectCount,
+                               self.parent(),
+                               randomSix=self.randomSix))
+
+            # self.parent().setCentralWidget(
+            #     advancedGamePage(self.parent(), self.randomSix))
 
     def playAnimalSound(self):
         print('playing sound')
@@ -167,47 +157,135 @@ class gamePage(QWidget):
     def readAnimalName(self):
         speakTextSSML(self.pictures[self.randomSix[self.index]])
 
+    def restartGame(self):
+        # self.parent().setCentralWidget(gamePage(self.parent()))
+        self.parent().setStyleSheet(
+            "QMainWindow {border-image: url(black.jpeg) 0 0 0 0 stretch stretch;}"
+        )
+        self.parent().setCentralWidget(blackPage(self.parent()))
 
-class summaryWidget(QWidget):
-    def __init__(self, correct, incorrect, parent=None):
+
+class summaryWidget1(QWidget):
+    def __init__(self, correct, incorrect, parent=None, randomSix=None):
         super().__init__(parent=parent)
         self.parent().setStyleSheet('QMainWindow {background-color: white;}')
+        self.setFixedSize(QSize(800, 480))
+        self.randomSix = randomSix
         self.correctCount = correct
         self.incorrectCount = incorrect
         self.correctLabel = QLabel(f'\tCorrect: {self.correctCount}')
         self.correctLabel.setStyleSheet(
-            'font-size: 80px; font-family: Opun; color: green;')
+            'font-size: 35px; font-family: Opun; color: green;')
         self.incorrectLabel = QLabel(f'\tIncorrect: {self.incorrectCount}')
         self.incorrectLabel.setStyleSheet(
-            'font-size: 80px; font-family: Opun; color: red;')
+            'font-size: 35px; font-family: Opun; color: red;')
         self.pageLayout = QVBoxLayout(self)
+        self.textLabel = QLabel('Press Any Button to Play Advanced Mode')
+        self.textLabel.setStyleSheet(
+            'font-size: 35px; font-family: Opun; color: black;')
+        self.textLabel.setAlignment(Qt.AlignmentFlag.AlignCenter
+                                    | Qt.AlignmentFlag.AlignTop)
+        self.pageLayout.addWidget(self.textLabel)
         self.correctBox = QHBoxLayout(self)
         self.incorrectBox = QHBoxLayout(self)
         self.correctPic = QPixmap('correct.png')
-        self.correctPic = self.correctPic.scaledToHeight(200)
+        self.correctPic = self.correctPic.scaledToHeight(100)
         self.correctPicLabel = QLabel()
         self.correctPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.correctPicLabel.setPixmap(self.correctPic)
         self.incorrectPic = QPixmap('incorrect.png')
-        self.incorrectPic = self.incorrectPic.scaledToHeight(200)
+        self.incorrectPic = self.incorrectPic.scaledToHeight(100)
         self.incorrectPicLabel = QLabel()
         self.incorrectPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.incorrectPicLabel.setPixmap(self.incorrectPic)
         self.correctBox.addWidget(self.correctPicLabel)
         self.correctBox.addWidget(self.correctLabel)
-        self.correctBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.correctBox.setAlignment(Qt.AlignmentFlag.AlignCenter
+                                     | Qt.AlignmentFlag.AlignTop)
         self.incorrectBox.addWidget(self.incorrectPicLabel)
         self.incorrectBox.addWidget(self.incorrectLabel)
-        self.incorrectBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.incorrectBox.setAlignment(Qt.AlignmentFlag.AlignCenter
+                                       | Qt.AlignmentFlag.AlignTop)
         self.pageLayout.addLayout(self.correctBox)
         self.pageLayout.addLayout(self.incorrectBox)
+
+        self.restartGameShortcut = []
+        for i in range(1, 5):
+            self.restartGameShortcut.append(
+                QShortcut(QKeySequence(str(i)), self))
+            self.restartGameShortcut[i - 1].activated.connect(
+                self.continueGame)
+
         self.setLayout(self.pageLayout)
+
+    def continueGame(self):
+        self.parent().setCentralWidget(
+            advancedGamePage(self.parent(), self.randomSix))
+
+
+class summaryWidget2(QWidget):
+    def __init__(self, correct, incorrect, parent=None):
+        super().__init__(parent=parent)
+        self.parent().setStyleSheet('QMainWindow {background-color: white;}')
+        self.setFixedSize(QSize(800, 480))
+        self.correctCount = correct
+        self.incorrectCount = incorrect
+        self.correctLabel = QLabel(f'\tCorrect: {self.correctCount}')
+        self.correctLabel.setStyleSheet(
+            'font-size: 35px; font-family: Opun; color: green;')
+        self.incorrectLabel = QLabel(f'\tIncorrect: {self.incorrectCount}')
+        self.incorrectLabel.setStyleSheet(
+            'font-size: 35px; font-family: Opun; color: red;')
+        self.pageLayout = QVBoxLayout(self)
+
+        self.textLabel = QLabel('Press Any Button to Restart')
+        self.textLabel.setStyleSheet(
+            'font-size: 35px; font-family: Opun; color: black;')
+        self.textLabel.setAlignment(Qt.AlignmentFlag.AlignCenter
+                                    | Qt.AlignmentFlag.AlignTop)
+        self.pageLayout.addWidget(self.textLabel)
+
+        self.correctBox = QHBoxLayout(self)
+        self.incorrectBox = QHBoxLayout(self)
+        self.correctPic = QPixmap('correct.png')
+        self.correctPic = self.correctPic.scaledToHeight(100)
+        self.correctPicLabel = QLabel()
+        self.correctPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.correctPicLabel.setPixmap(self.correctPic)
+        self.incorrectPic = QPixmap('incorrect.png')
+        self.incorrectPic = self.incorrectPic.scaledToHeight(100)
+        self.incorrectPicLabel = QLabel()
+        self.incorrectPicLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.incorrectPicLabel.setPixmap(self.incorrectPic)
+        self.correctBox.addWidget(self.correctPicLabel)
+        self.correctBox.addWidget(self.correctLabel)
+        self.correctBox.setAlignment(Qt.AlignmentFlag.AlignCenter
+                                     | Qt.AlignmentFlag.AlignTop)
+        self.incorrectBox.addWidget(self.incorrectPicLabel)
+        self.incorrectBox.addWidget(self.incorrectLabel)
+        self.incorrectBox.setAlignment(Qt.AlignmentFlag.AlignCenter
+                                       | Qt.AlignmentFlag.AlignTop)
+        self.pageLayout.addLayout(self.correctBox)
+        self.pageLayout.addLayout(self.incorrectBox)
+
+        self.restartGameShortcut = []
+        for i in range(1, 5):
+            self.restartGameShortcut.append(
+                QShortcut(QKeySequence(str(i)), self))
+            self.restartGameShortcut[i - 1].activated.connect(
+                self.continueGame)
+
+        self.setLayout(self.pageLayout)
+
+    def continueGame(self):
+        self.parent().setCentralWidget(gamePage(self.parent()))
 
 
 class advancedGamePage(QWidget):
     def __init__(self, parent=None, cardSet=None):
         super().__init__(parent=parent)
         self.player = vlc.MediaPlayer()
+        self.setFixedSize(QSize(800, 480))
         self.correctCount = 0
         self.incorrectCount = 0
         self.pageLayout = QGridLayout()
@@ -239,7 +317,7 @@ class advancedGamePage(QWidget):
         self.correctButtonStyle = (
             "QPushButton"
             "{"
-            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 70px; font-family: Opun;"
+            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 35px; font-family: Opun;"
             "}"
             "QPushButton::pressed"
             "{"
@@ -249,7 +327,7 @@ class advancedGamePage(QWidget):
         self.inCorrectButtonStyle = (
             "QPushButton"
             "{"
-            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 70px; font-family: Opun;"
+            "border-radius: 15; border: none; background-color: rgba(255, 255, 255, 0.75); color: black; font-size: 35px; font-family: Opun;"
             "}"
             "QPushButton::pressed"
             "{"
@@ -261,7 +339,7 @@ class advancedGamePage(QWidget):
             self.buttons[i].setText(
                 self.pictures[randomChoices[i]].title().upper())
 
-            self.buttons[i].setFixedSize(QSize(450, 200))
+            self.buttons[i].setFixedSize(QSize(250, 100))
             if randomChoices[i] == self.randomSix[self.index]:
                 self.buttons[i].setStyleSheet(self.correctButtonStyle)
                 self.buttons[i].clicked.connect(self.correct)
@@ -273,6 +351,10 @@ class advancedGamePage(QWidget):
                                       Qt.AlignmentFlag.AlignBottom)
         self.playSoundShortcut = QShortcut(QKeySequence('4'), self)
         self.playSoundShortcut.activated.connect(self.playAnimalSound)
+
+        self.restartGameShortcut = QShortcut(QKeySequence('5'), self)
+        self.restartGameShortcut.activated.connect(self.restartGame)
+
         self.setLayout(self.pageLayout)
 
     def correct(self):
@@ -318,10 +400,9 @@ class advancedGamePage(QWidget):
                 self.buttons[i].setShortcut(str(i + 1))
 
         else:
-            self.parent().summaryWidget = summaryWidget(
-                self.correctCount, self.incorrectCount, self.parent())
-
-            self.parent().setCentralWidget(self.parent().summaryWidget)
+            self.parent().setCentralWidget(
+                summaryWidget2(self.correctCount, self.incorrectCount,
+                               self.parent()))
 
     def playAnimalSound(self):
         print('playing sound')
@@ -331,6 +412,25 @@ class advancedGamePage(QWidget):
                             self.pictures[self.randomSix[self.index]] + '.mp3')
         self.player.play()
 
+    def restartGame(self):
+        # self.parent().setCentralWidget(gamePage(self.parent()))
+        self.parent().setStyleSheet(
+            "QMainWindow {border-image: url(black.jpeg) 0 0 0 0 stretch stretch;}"
+        )
+        self.parent().setCentralWidget(blackPage(self.parent()))
+
+
+class blackPage(QWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+        self.restartGameShortcut = QShortcut(QKeySequence('6'), self)
+        self.restartGameShortcut.activated.connect(self.restartGame)
+        self.setFixedSize(QSize(800, 480))
+
+    def restartGame(self):
+        self.parent.setCentralWidget(gamePage(self.parent))
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -338,6 +438,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Spy K🔍ds")
         self.setWindowIcon(QIcon('icon.png'))
         self.setStyleSheet('QMainWindow {background-color: white;}')
+        # self.setFixedSize(QSize(800, 480))
+        self.setBaseSize(QSize(800, 480))
         self.showMaximized()
 
 
@@ -345,7 +447,21 @@ if __name__ == '__main__':
     app = QApplication([])
     app.setWindowIcon(QIcon('spykid.png'))
     window = MainWindow()
+    window.setStyleSheet(
+        "QMainWindow {border-image: url(black.jpeg) 0 0 0 0 stretch stretch;}")
+    window.setCentralWidget(blackPage(window))
+
+    screen_count = app.screens()
+    if len(screen_count) > 1:
+        second_screen = screen_count[1]
+        geometry = second_screen.geometry()
+        window = MainWindow()
+        window.move(geometry.x(), geometry.y())
+
     window.show()
-    window.setCentralWidget(gamePage(window))
+    window.showFullScreen()
+
+    # window.setCentralWidget(gamePage(window))
     # window.setCentralWidget(advancedGamePage(window))
+    # window.setCentralWidget(summaryWidget2(6, 0, window))
     app.exec()
